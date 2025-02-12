@@ -26,9 +26,26 @@
             font-size: 16px;
             cursor: pointer;
         }
+        #backButton {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: blue;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-family: Arial;
+            font-size: 16px;
+        }
+        
+        #backButton:hover {
+            background: darkblue;
+        }
     </style>
 </head>
 <body>
+    <a href="index.html" id="backButton">← Back to Home</a>
     <div id="score">Score: 0</div>
     <div id="lives">Lives: 3</div>
     <canvas id="gameCanvas" width="448" height="496"></canvas>
@@ -271,22 +288,34 @@
         }
 
         function isWall(x, y) {
-            // Calculate grid positions without the -1 offset that was causing early collisions
-            const leftEdge = Math.floor(x / CELL_SIZE);
-            const rightEdge = Math.floor((x + CELL_SIZE) / CELL_SIZE);
-            const topEdge = Math.floor(y / CELL_SIZE);
-            const bottomEdge = Math.floor((y + CELL_SIZE) / CELL_SIZE);
+            // Convert pixel coordinates to grid coordinates more precisely
+            // Add a small buffer to prevent getting stuck at edges
+            const buffer = 2;
             
-            // Check if any corner is out of bounds
-            if (leftEdge < 0 || rightEdge >= COLS || topEdge < 0 || bottomEdge >= ROWS) {
-                return true;
+            // Check the four corners of Pac-Man's position with the buffer
+            const points = [
+                { x: x + buffer, y: y + buffer },                       // Top-left
+                { x: x + CELL_SIZE - buffer, y: y + buffer },          // Top-right
+                { x: x + buffer, y: y + CELL_SIZE - buffer },          // Bottom-left
+                { x: x + CELL_SIZE - buffer, y: y + CELL_SIZE - buffer }  // Bottom-right
+            ];
+
+            for (let point of points) {
+                const gridX = Math.floor(point.x / CELL_SIZE);
+                const gridY = Math.floor(point.y / CELL_SIZE);
+
+                // Check bounds
+                if (gridX < 0 || gridX >= COLS || gridY < 0 || gridY >= ROWS) {
+                    return true;
+                }
+
+                // Check if this point intersects with a wall
+                if (maze[gridY][gridX] === 1 || maze[gridY][gridX] === 4) {
+                    return true;
+                }
             }
             
-            // Check all corners for wall collision
-            return (maze[topEdge][leftEdge] === 1 || maze[topEdge][leftEdge] === 4) ||
-                   (maze[topEdge][rightEdge] === 1 || maze[topEdge][rightEdge] === 4) ||
-                   (maze[bottomEdge][leftEdge] === 1 || maze[bottomEdge][leftEdge] === 4) ||
-                   (maze[bottomEdge][rightEdge] === 1 || maze[bottomEdge][rightEdge] === 4);
+            return false;
         }
 
         function moveGhosts() {
@@ -379,26 +408,25 @@
         document.addEventListener('keydown', (e) => {
             if (!gameRunning) return;
             
+            let newX = pacman.x;
+            let newY = pacman.y;
+            
             switch(e.key) {
                 case 'ArrowRight':
-                    if (!isWall(pacman.x + pacman.speed, pacman.y)) {
-                        pacman.direction = 0;
-                    }
+                    newX += pacman.speed;
+                    if (!isWall(newX, pacman.y)) pacman.direction = 0;
                     break;
                 case 'ArrowUp':
-                    if (!isWall(pacman.x, pacman.y - pacman.speed)) {
-                        pacman.direction = -Math.PI/2;
-                    }
+                    newY -= pacman.speed;
+                    if (!isWall(pacman.x, newY)) pacman.direction = -Math.PI/2;
                     break;
                 case 'ArrowLeft':
-                    if (!isWall(pacman.x - pacman.speed, pacman.y)) {
-                        pacman.direction = Math.PI;
-                    }
+                    newX -= pacman.speed;
+                    if (!isWall(newX, pacman.y)) pacman.direction = Math.PI;
                     break;
                 case 'ArrowDown':
-                    if (!isWall(pacman.x, pacman.y + pacman.speed)) {
-                        pacman.direction = Math.PI/2;
-                    }
+                    newY += pacman.speed;
+                    if (!isWall(pacman.x, newY)) pacman.direction = Math.PI/2;
                     break;
             }
         });
@@ -416,10 +444,19 @@
                 case Math.PI/2: newY += pacman.speed; break;
             }
 
-            // Simplified collision check - just check the new position
+            // Check if the new position is valid
             if (!isWall(newX, newY)) {
                 pacman.x = newX;
                 pacman.y = newY;
+            }
+
+            // Align to grid when near cell center to prevent getting stuck
+            if (pacman.speed > 1) {
+                const centerX = Math.round(pacman.x / CELL_SIZE) * CELL_SIZE;
+                const centerY = Math.round(pacman.y / CELL_SIZE) * CELL_SIZE;
+                
+                if (Math.abs(pacman.x - centerX) < pacman.speed) pacman.x = centerX;
+                if (Math.abs(pacman.y - centerY) < pacman.speed) pacman.y = centerY;
             }
 
             moveGhosts();
