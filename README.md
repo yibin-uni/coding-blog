@@ -4,10 +4,11 @@ This is my coding blog where I share my projects and tutorials. Stay tuned for m
 
 ## How to View
 
-This blog is hosted on GitHub Pages. You can view it [here](https://yibin-uni.github.io/coding-blog/){:target="_blank"}.
+This blog is hosted on GitHub Pages. You can view it [here](https://yibin-uni.github.io/coding-blog/).
 
-## Future Content
+## Content
 
-- HTML for a game
-- More coding tutorials
+- Pac-Man game in HTML
+- Daily ArXiv papers on causal inference, generative models, and selective inference
 - Project showcases
+- More coding tutorials

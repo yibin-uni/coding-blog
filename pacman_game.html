@@ -368,6 +368,12 @@
                     handleDeath();
                 }
             });
+
+            // Check for winning condition
+            if (maze.flat().every(cell => cell !== 2)) {
+                gameRunning = false;
+                alert('Congratulations! You won! Final Score: ' + score);
+            }
         }
 
         function handleDeath() {
