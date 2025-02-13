@@ -1,6 +1,5 @@
 myenv
 __pycache__
-data
 templates
 requirements.txt
 *.png
