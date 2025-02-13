@@ -58,15 +58,33 @@
             
             <h2>Projects</h2>
             <ul>
-                <li><a href="pacman_game.html" style="color: #16213e; text-decoration: none;">Play Pac-Man Game</a></li>
+                <li><a href="/pacman" style="color: #16213e; text-decoration: none;">Play Pac-Man Game</a></li>
+                <li><a href="/arxiv" style="color: #16213e; text-decoration: none;">ArXiv Daily</a></li>
             </ul>
 
             <h2>Coming Soon</h2>
             <ul>
-                <li>HTML for a game</li>
                 <li>More coding tutorials</li>
                 <li>Project showcases</li>
             </ul>
+
+            {% if papers is defined %}
+                {% if papers %}
+                <h2>Latest ArXiv Papers</h2>
+                <ul>
+                    {% for paper in papers %}
+                    <li>
+                        <h3>{{ paper.title }}</h3>
+                        <p><strong>Authors:</strong> {{ paper.authors }}</p>
+                        <p>{{ paper.summary }}</p>
+                        <p><a href="{{ paper.pdf_link }}" target="_blank">PDF</a></p>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>No papers found.</p>
+                {% endif %}
+            {% endif %}
         </div>
     </div>
 </body>
