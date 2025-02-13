@@ -1,6 +1,9 @@
-pacman_trial.html
-pm_claude.html
 myenv
 __pycache__
+data
 *.png
 *.jpeg
+pacman_trial.html
+pm_claude.html
+app.py
+arxiv_fetcher.py

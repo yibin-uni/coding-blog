@@ -9,6 +9,6 @@ This blog is hosted on GitHub Pages. You can view it [here](https://yibin-uni.gi
 ## Content
 
 - Pac-Man game in HTML
-- Daily ArXiv papers on causal inference, generative models, and selective inference
+- Daily ArXiv papers on causal inference, and graph neural networks
 - Project showcases
 - More coding tutorials
